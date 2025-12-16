@@ -1,14 +1,25 @@
 local M = {}
 
 function M.get_commits(cb)
-  vim.system({
+  local cfg = require("gitwalk").config or {}
+  local max_count = tonumber(cfg.max_count)
+
+  local args = {
     "git", "log",
+    string.format("--max-count=%d", max_count),
     "--pretty=format:%h %ad %s",
     "--date=short",
     "--color=never",
-  }, { text = true }, function(res)
+  }
+
+  vim.system(args, { text = true }, function(res)
     if res.code ~= 0 then
+      local err = (res.stderr or ""):gsub("\n$", "")
       vim.schedule(function()
+        vim.notify(
+          (#err > 0) and ("git log failed: " .. err) or "git log failed (are you in a git repo?)",
+          vim.log.levels.WARN
+        )
         cb({})
       end)
       return

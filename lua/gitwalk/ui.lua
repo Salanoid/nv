@@ -17,6 +17,10 @@ function M.open(commits)
   M.state.cursor = 1
 
   M.state.buf = api.nvim_create_buf(false, true)
+  vim.bo[M.state.buf].buftype = "nofile"
+  vim.bo[M.state.buf].bufhidden = "wipe"
+  vim.bo[M.state.buf].swapfile = false
+  vim.bo[M.state.buf].filetype = "gitwalk"
 
   M.state.win_obj = snacks.win({
     buf = M.state.buf,
@@ -26,6 +30,7 @@ function M.open(commits)
     border = "rounded",
   })
   M.state.win = M.state.win_obj.win
+  vim.wo[M.state.win].cursorline = true
 
   M.render()
   M.keymaps()
@@ -38,7 +43,9 @@ function M.render()
     table.insert(lines, mark .. " " .. c)
   end
 
+  vim.bo[M.state.buf].modifiable = true
   api.nvim_buf_set_lines(M.state.buf, 0, -1, false, lines)
+  vim.bo[M.state.buf].modifiable = false
   api.nvim_win_set_cursor(M.state.win, { M.state.cursor, 0 })
 end
 

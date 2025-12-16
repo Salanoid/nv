@@ -2,6 +2,7 @@ local M = {}
 
 local function diffview_open(args)
   vim.cmd("DiffviewOpen " .. table.concat(args, " "))
+  -- vim.cmd("CodeDiff " .. table.concat(args, " "))
 end
 
 function M.show_selected(hashes)

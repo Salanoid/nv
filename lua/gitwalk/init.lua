@@ -1,5 +1,13 @@
 local M = {}
 
+M.config = {
+  max_count = 300, -- default max commits to load
+}
+
+function M.setup(opts)
+  M.config = vim.tbl_deep_extend("force", M.config, opts or {})
+end
+
 function M.open()
   require("gitwalk.log").get_commits(function(commits)
     if #commits == 0 then
